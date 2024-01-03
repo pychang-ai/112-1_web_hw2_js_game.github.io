@@ -21,7 +21,7 @@ let xV = 0;
 let yV = 0;
 let score = 0;
 let difficultyLevel = 1; // 新增難度等級
-let isPaused = false; // 新增暫停狀態
+
 
 function startGame() {
     snakePosition();
