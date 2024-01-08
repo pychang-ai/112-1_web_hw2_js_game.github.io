@@ -7,6 +7,7 @@ class SnakePart {
         this.y = y;
     }
 }
+const apples = [];
 
 let speed = 8;
 
@@ -25,7 +26,20 @@ let yV = 0;
 
 let score = 0;
 
+function createApple() {
+    if (apples.length < 3) {
+        const newAppleX = Math.floor(Math.random() * tileCount);
+        const newAppleY = Math.floor(Math.random() * tileCount);
+        apples.push({ x: newAppleX, y: newAppleY });
+    }
+}
+
 function startGame() {
+    clearScreen();
+    {
+        createApple();
+        setTimeout(createApple, 20000);  
+    }
     snakePosition();
     let lose = isOver();
     if (lose) {
@@ -91,7 +105,16 @@ function isOver() {
 
 function clearScreen() {
     ctx.fillStyle = 'black';
-    ctx.fillRect(0, 0, 400, 400);
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.strokeStyle = 'gray';
+    ctx.lineWidth = 0.5;
+
+    for (let i = 0; i < canvas.width; i += tileSize) {
+        ctx.beginPath();
+        ctx.moveTo(i, 0);
+        ctx.lineTo(i, canvas.height);
+        ctx.stroke();
+    }
 }
 
 function drawSnake() {
@@ -113,8 +136,11 @@ function drawSnake() {
 }
 
 function drawApple() {
-    ctx.fillStyle = "red";
-    ctx.fillRect(appleX * tileCount, appleY * tileCount, tileSize, tileSize);
+    ctx.fillStyle = 'red';
+    for (let i = 0; i < apples.length; i++) {
+        const apple = apples[i];
+        ctx.fillRect(apple.x * tileCount, apple.y * tileCount, tileSize, tileSize);
+    }
 }
 
 function drawScore() {
@@ -124,6 +150,17 @@ function drawScore() {
 }
 
 function checkColli() {
+    for (let i = 0; i < apples.length; i++) {
+        const apple = apples[i];
+        if (apple.x === headX && apple.y === headY) {
+            apples.splice(i, 1); 
+            score++;
+            tailLen++;
+            if (score > 5 && score % 2 == 0) {
+                speed++;
+            }
+        }
+    }
     if (appleX === headX && appleY === headY) {
         appleX = Math.floor(Math.random() * tileCount);
         appleY = Math.floor(Math.random() * tileCount);
