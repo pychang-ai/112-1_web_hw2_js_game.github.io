@@ -35,9 +35,10 @@ function createApple() {
 }
 
 function startGame() {
+    clearScreen();
     {
         createApple();
-        setTimeout(createApple, 600000);  
+        setTimeout(createApple, 20000);  
     }
     snakePosition();
     let lose = isOver();
@@ -104,7 +105,16 @@ function isOver() {
 
 function clearScreen() {
     ctx.fillStyle = 'black';
-    ctx.fillRect(0, 0, 400, 400);
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.strokeStyle = 'gray';
+    ctx.lineWidth = 0.5;
+
+    for (let i = 0; i < canvas.width; i += tileSize) {
+        ctx.beginPath();
+        ctx.moveTo(i, 0);
+        ctx.lineTo(i, canvas.height);
+        ctx.stroke();
+    }
 }
 
 function drawSnake() {
