@@ -56,7 +56,7 @@ function setSpeed() {
 
 function isWin() {
     let win = false;
-    if (score == 25) {
+    if (score == 50) {
         win = true;
     }
     if (win) {
@@ -118,9 +118,8 @@ function drawApple() {
 }
 
 function drawScore() {
-    ctx.fillStyle = "white";
-    ctx.font = "10px Poppins";
-    ctx.fillText("score: " + score, canvas.width - 50, 10);
+    const scoreElement = document.getElementById('score');
+    scoreElement.textContent = "分數: " + score;
 }
 
 function checkColli() {
@@ -129,7 +128,7 @@ function checkColli() {
         appleY = Math.floor(Math.random() * tileCount);
         tailLen++;
         score++;
-        if (score > 5 && score % 2 == 0) {
+        if (score > 10 && score % 2 == 0) {
             speed++;
         }
     }

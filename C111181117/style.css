@@ -14,7 +14,7 @@ canvas{
 #score-container {
     position: absolute;
     top: 15px;
-    right: 800px;
+    right: 300px;
     z-index: 1; /* 確保分數顯示在畫布上方 */
   }
   
