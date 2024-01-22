@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>貪食蛇</title>
+  <style>
+    #game-board {
+      width: 300px;
+      height: 300px;
+      border: 1px solid #000;
+      position: relative;
+    }
+
+    .snake {
+      width: 20px;
+      height: 20px;
+      background-color: green;
+      position: absolute;
+    }
+
+    .food {
+      width: 20px;
+      height: 20px;
+      background-color: red;
+      position: absolute;
+    }
+  </style>
+</head>
+<body>
+  <div id="game-board"></div>
+
+  <script>
+    const board = document.getElementById('game-board');
+    let snake = [{ x: 0, y: 0 }];
+    let food = { x: 0, y: 0 };
+    let direction = 'right';
+
+    function drawSnake() {
+      const snakeElements = document.querySelectorAll('.snake');
+      snakeElements.forEach(element => element.remove());
+
+      snake.forEach(segment => {
+        const snakeSegment = document.createElement('div');
+        snakeSegment.className = 'snake';
+        snakeSegment.style.left = segment.x + 'px';
+        snakeSegment.style.top = segment.y + 'px';
+        board.appendChild(snakeSegment);
+      });
+    }
+
+    function drawFood() {
+      const foodElement = document.querySelector('.food');
+      if (foodElement) {
+        foodElement.remove();
+      }
+
+      const newFood = document.createElement('div');
+      newFood.className = 'food';
+      newFood.style.left = food.x + 'px';
+      newFood.style.top = food.y + 'px';
+      board.appendChild(newFood);
+    }
+
+    function moveSnake() {
+      const head = { ...snake[0] };
+
+      // Move the head based on the current direction
+      if (direction === 'right') {
+        head.x += 20;
+      } else if (direction === 'left') {
+        head.x -= 20;
+      } else if (direction === 'up') {
+        head.y -= 20;
+      } else if (direction === 'down') {
+        head.y += 20;
+      }
+
+      // Check if the head collided with the body
+      if (checkCollision(head, snake.slice(1))) {
+        alert('Game Over! You collided with yourself.');
+        resetGame();
+        return;
+      }
+
+      // Check if the head reached the food
+      if (head.x === food.x && head.y === food.y) {
+        // Snake ate the food, generate new food
+        generateFood();
+      } else {
+        // Remove the last segment of the snake
+        snake.pop();
+      }
+
+      snake.unshift(head);
+
+      drawSnake();
+    }
+
+    function checkCollision(head, array) {
+      return array.some(segment => segment.x === head.x && segment.y === head.y);
+    }
+
+    function generateFood() {
+      const maxX = (board.offsetWidth / 20) - 1;
+      const maxY = (board.offsetHeight / 20) - 1;
+
+      food.x = Math.floor(Math.random() * maxX) * 20;
+      food.y = Math.floor(Math.random() * maxY) * 20;
+
+      drawFood();
+    }
+
+    function handleKeyPress(event) {
+      // Update direction based on arrow keys
+      if (event.key === 'ArrowRight' && direction !== 'left') {
+        direction = 'right';
+      } else if (event.key === 'ArrowLeft' && direction !== 'right') {
+        direction = 'left';
+      } else if (event.key === 'ArrowUp' && direction !== 'down') {
+        direction = 'up';
+      } else if (event.key === 'ArrowDown' && direction !== 'up') {
+        direction = 'down';
+      }
+    }
+
+    function resetGame() {
+      snake = [{ x: 0, y: 0 }];
+      direction = 'right';
+      generateFood();
+      drawSnake();
+      drawFood();
+    }
+
+    document.addEventListener('keydown', handleKeyPress);
+
+    generateFood(); // Initial food generation
+    setInterval(moveSnake, 200); // Move snake every 200 milliseconds
+  </script>
+</body>
+</html>
