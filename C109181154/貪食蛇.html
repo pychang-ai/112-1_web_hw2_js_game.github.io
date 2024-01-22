@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <title>貪吃蛇遊戲</title>
+  <style>
+    #game-board {
+      width: 400px;
+      height: 400px;
+      border: 1px solid #000;
+      position: relative;
+    }
+    .snake {
+      width: 20px;
+      height: 20px;
+      background-color: green;
+      position: absolute;
+    }
+    .food {
+      width: 20px;
+      height: 20px;
+      background-color: red;
+      position: absolute;
+    }
+  </style>
+</head>
+<body>
+  <div id="game-board"></div>
+  <p id="score">得分：0</p>
+
+  <script>
+    const gameBoard = document.getElementById('game-board');
+    let snake = [{ x: 200, y: 200 }];
+    let dx = 0;
+    let dy = 0;
+    let score = 0;
+    const snakeSize = 20;
+    const boardSize = 400;
+    let food = generateFoodPosition();
+
+    function drawSnake() {
+      gameBoard.innerHTML = '';
+      snake.forEach(segment => {
+        const snakeElement = document.createElement('div');
+        snakeElement.style.left = segment.x + 'px';
+        snakeElement.style.top = segment.y + 'px';
+        snakeElement.classList.add('snake');
+        gameBoard.appendChild(snakeElement);
+      });
+    }
+
+    function drawFood() {
+      const foodElement = document.createElement('div');
+      foodElement.style.left = food.x + 'px';
+      foodElement.style.top = food.y + 'px';
+      foodElement.classList.add('food');
+      gameBoard.appendChild(foodElement);
+    }
+
+    function moveSnake() {
+      const head = { x: snake[0].x + dx, y: snake[0].y + dy };
+      snake.unshift(head);
+      if (head.x === food.x && head.y === food.y) {
+        score += 1;
+        document.getElementById('score').innerText = '得分：' + score;
+        food = generateFoodPosition();
+      } else {
+        snake.pop();
+      }
+      checkCollision();
+      drawSnake();
+      drawFood();
+    }
+
+    function generateFoodPosition() {
+      const maxX = boardSize / snakeSize - 1;
+      const maxY = boardSize / snakeSize - 1;
+      const randomX = Math.floor(Math.random() * maxX) * snakeSize;
+      const randomY = Math.floor(Math.random() * maxY) * snakeSize;
+      return { x: randomX, y: randomY };
+    }
+
+    function checkCollision() {
+      const head = snake[0];
+      if (
+        head.x < 0 ||
+        head.x >= boardSize ||
+        head.y < 0 ||
+        head.y >= boardSize ||
+        snake.slice(1).some(segment => segment.x === head.x && segment.y === head.y)
+      ) {
+        clearInterval(gameInterval);
+        alert('遊戲結束 SCORE：' + score);
+      } else if (score >= 25) {
+        clearInterval(gameInterval);
+        alert('你贏得了遊戲！');
+      }
+    }
+
+    function restartGame() {
+      snake = [{ x: 200, y: 200 }];
+      dx = 0;
+      dy = 0;
+      score = 0;
+      document.getElementById('score').innerText = '得分：' + score;
+      food = generateFoodPosition();
+    }
+
+    function handleSpaceBar(event) {
+      const keyPressed = event.keyCode;
+      if (keyPressed === 32) {
+        clearInterval(gameInterval);
+        restartGame();
+        gameInterval = setInterval(moveSnake, 100);
+      }
+    }
+
+    function changeDirection(event) {
+      const keyPressed = event.keyCode;
+      if (keyPressed === 37 && dx !== snakeSize) {
+        dx = -snakeSize;
+        dy = 0;
+      }
+      if (keyPressed === 38 && dy !== snakeSize) {
+        dx = 0;
+        dy = -snakeSize;
+      }
+      if (keyPressed === 39 && dx !== -snakeSize) {
+        dx = snakeSize;
+        dy = 0;
+      }
+      if (keyPressed === 40 && dy !== -snakeSize) {
+        dx = 0;
+        dy = snakeSize;
+      }
+    }
+
+    document.addEventListener('keydown', changeDirection);
+    document.addEventListener('keydown', handleSpaceBar);
+
+    drawSnake();
+    drawFood();
+    let gameInterval = setInterval(moveSnake, 100);
+  </script>
+</body>
+</html>
+<div id="info">
+    <p>姓名：蔡佳謙</p>
+    <p>班級：海資四甲</p>
+    <p>學號：C109181154</p>
+  </div>
